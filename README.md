@@ -79,9 +79,17 @@ socket.once('listening', function() {
   })
 })
 
+// Node style API (is commented out in the module)
 socket.on('message', function(msg, rinfo) {
   console.log('message was received', msg)
 })
+
+// RCT style event
+this.eventEmitter = new NativeEventEmitter(NativeModules.RNUdpSocketEventEmitter);
+    this.onUdpData = this.eventEmitter.addListener(
+      NativeModules.RNUdpSocketEventEmitter.onUdpData,
+      data => console.log('data', data),
+    );
 ```
 
 ### Note

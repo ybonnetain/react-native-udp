@@ -12,6 +12,7 @@
 		73D9377D1AFF9EBE00450142 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73D9377C1AFF9EBE00450142 /* CFNetwork.framework */; };
 		73D9377F1AFF9F6E00450142 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73D9377E1AFF9F6E00450142 /* UIKit.framework */; };
 		73D937AA1AFFA5D100450142 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D937A81AFFA5C900450142 /* GCDAsyncUdpSocket.m */; };
+		D428BFC021FF24050064A6C0 /* RNUdpSocketEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = D428BFBF21FF24050064A6C0 /* RNUdpSocketEventEmitter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,6 +37,8 @@
 		73D9377E1AFF9F6E00450142 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		73D937A71AFFA5C900450142 /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncUdpSocket.h; path = CocoaAsyncSocket/GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
 		73D937A81AFFA5C900450142 /* GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncUdpSocket.m; path = CocoaAsyncSocket/GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
+		D428BFBF21FF24050064A6C0 /* RNUdpSocketEventEmitter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNUdpSocketEventEmitter.m; sourceTree = "<group>"; };
+		D428BFC121FF24A30064A6C0 /* RNUdpSocketEventEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNUdpSocketEventEmitter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +65,8 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				D428BFC121FF24A30064A6C0 /* RNUdpSocketEventEmitter.h */,
+				D428BFBF21FF24050064A6C0 /* RNUdpSocketEventEmitter.m */,
 				73D9377E1AFF9F6E00450142 /* UIKit.framework */,
 				73D9377C1AFF9EBE00450142 /* CFNetwork.framework */,
 				735000691AFF9AB600ED3C82 /* UdpSocketClient.h */,
@@ -132,6 +137,7 @@
 			files = (
 				73D937AA1AFFA5D100450142 /* GCDAsyncUdpSocket.m in Sources */,
 				7350006B1AFF9AB600ED3C82 /* UdpSocketClient.m in Sources */,
+				D428BFC021FF24050064A6C0 /* RNUdpSocketEventEmitter.m in Sources */,
 				13BE3DEE1AC21097009241FE /* UdpSockets.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

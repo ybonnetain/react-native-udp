@@ -1,10 +1,3 @@
-//
-//  RCTUDPClient.m
-//  react-native-udp
-//
-//  Created by Mark Vayngrib on 5/9/15.
-//  Copyright (c) 2015 Tradle, Inc. All rights reserved.
-//
 
 #import <netinet/in.h>
 #import <arpa/inet.h>
@@ -12,7 +5,11 @@
 #import <React/RCTBridgeModule.h>
 #import "GCDAsyncUdpSocket.h"
 
+#import "RNUdpSocketEventEmitter.h"
+
+
 NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
+
 
 @interface UdpSocketClient()
 {
@@ -29,12 +26,17 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
 
 @end
 
+
+
 @implementation UdpSocketClient
+
 
 + (id)socketClientWithConfig:(id<SocketClientDelegate>)delegate
 {
   return [[[self class] alloc] initWithConfig:delegate];
 }
+
+
 
 - (id)initWithConfig:(id<SocketClientDelegate>) aDelegate
 {
@@ -43,10 +45,13 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
     _clientDelegate = aDelegate;
     _pendingSends = [NSMutableDictionary dictionary];
     _lock = [[NSLock alloc] init];
+    _emitter = [RNUdpSocketEventEmitter allocWithZone: nil];
   }
 
   return self;
 }
+
+
 
 - (void)setPendingSend:(RCTResponseSenderBlock)callback forKey:(NSNumber *)key
 {
@@ -58,6 +63,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
   }
 }
 
+
+
 - (RCTResponseSenderBlock)getPendingSend:(NSNumber *)key
 {
   [_lock lock];
@@ -68,6 +75,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
   }
 }
 
+
+
 - (void)dropPendingSend:(NSNumber *)key
 {
   [_lock lock];
@@ -77,6 +86,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
     [_lock unlock];
   }
 }
+
+
 
 - (BOOL)bind:(u_int16_t)port address:(NSString *)address options:(NSDictionary *)options error:(NSError **) error
 {
@@ -117,6 +128,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
   return result && [_udpSocket beginReceiving:error];
 }
 
+
+
 - (BOOL)joinMulticastGroup:(NSString *)address error:(NSError **) error
 {
     if(![_udpSocket joinMulticastGroup:address error:&error]){
@@ -125,6 +138,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
     }
     return true;
 }
+
+
 
 - (BOOL)leaveMulticastGroup:(NSString *)address error:(NSError **) error
 {
@@ -135,6 +150,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
     return true;
 }
 
+
+
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)msgTag
 {
   NSNumber* tagNum = [NSNumber numberWithLong:msgTag];
@@ -144,6 +161,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
     [self dropPendingSend:tagNum];
   }
 }
+
+
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)msgTag dueToError:(NSError *)error
 {
@@ -156,6 +175,8 @@ NSString *const RCTUDPErrorDomain = @"RCTUDPErrorDomain";
     [self dropPendingSend:tagNum];
   }
 }
+
+
 
 - (void) send:(NSData *)data
    remotePort:(u_int16_t)port
@@ -170,6 +191,8 @@ remoteAddress:(NSString *)address
   tag++;
 }
 
+
+
 - (NSDictionary* ) address
 {
   return @{
@@ -178,10 +201,14 @@ remoteAddress:(NSString *)address
   };
 }
 
+
+
 - (void) close
 {
   [_udpSocket close];
 }
+
+
 
 - (BOOL) setBroadcast:(BOOL)flag
                 error:(NSError **)error
@@ -189,17 +216,36 @@ remoteAddress:(NSString *)address
   return [_udpSocket enableBroadcast:flag error:error];
 }
 
+
+
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
                   fromAddress:(NSData *)address
                   withFilterContext:(id)filterContext
 {
   if (!_clientDelegate) return;
-
+    
   NSString *host = nil;
   uint16_t port = 0;
   [GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
-  [_clientDelegate onData:self data:data host:host port:port];
+  
+  // Node style API
+  // NSString *base64String = [data base64EncodedStringWithOptions:0];
+  // [_clientDelegate onData:self data:data host:host port:port];
+
+  // RCT style API
+  NSError *error;
+  NSDictionary *json = [NSJSONSerialization
+                        JSONObjectWithData:data
+                                   options:NSJSONReadingMutableContainers
+                                     error:&error];
+  if (error) {
+    // drop frame
+  } else {
+    [_emitter emit:json host:host port:[NSNumber numberWithInt:port]];
+  }
 }
+
+
 
 - (NSError *)badParamError:(NSString *)errMsg
 {
@@ -210,6 +256,8 @@ remoteAddress:(NSString *)address
                          userInfo:userInfo];
 }
 
+
+
 - (NSError *)badInvocationError:(NSString *)errMsg
 {
   NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
@@ -219,6 +267,8 @@ remoteAddress:(NSString *)address
                          userInfo:userInfo];
 }
 
+
+
 - (NSError *)sendFailedError:(NSString *)errMsg
 {
   NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
@@ -227,6 +277,8 @@ remoteAddress:(NSString *)address
                              code:RCTUDPSendFailedError
                          userInfo:userInfo];
 }
+
+
 
 - (dispatch_queue_t)methodQueue
 {

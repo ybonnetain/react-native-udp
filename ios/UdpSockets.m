@@ -1,10 +1,3 @@
-//
-//  UdpSockets.m
-//  react-native-udp
-//
-//  Created by Mark Vayngrib on 5/8/15.
-//  Copyright (c) 2015 Tradle, Inc. All rights reserved.
-//
 
 #import <React/RCTAssert.h>
 #import <React/RCTBridge.h>
@@ -14,14 +7,20 @@
 #import "UdpSockets.h"
 #import "UdpSocketClient.h"
 
+
 @implementation UdpSockets
 {
     NSMutableDictionary<NSNumber *, UdpSocketClient *> *_clients;
 }
 
+
 RCT_EXPORT_MODULE()
 
+
+
 @synthesize bridge = _bridge;
+
+
 
 - (void)dealloc
 {
@@ -31,8 +30,10 @@ RCT_EXPORT_MODULE()
 }
 
 
+
 RCT_EXPORT_METHOD(createSocket:(nonnull NSNumber*)cId withOptions:(NSDictionary*)options)
 {
+NSLog(@"UDP: CREATE SOCKET");
     if (!cId) {
         RCTLogError(@"%@.createSocket called with nil id parameter.", [self class]);
         return;
@@ -49,6 +50,8 @@ RCT_EXPORT_METHOD(createSocket:(nonnull NSNumber*)cId withOptions:(NSDictionary*
 
     _clients[cId] = [UdpSocketClient socketClientWithConfig:self];
 }
+
+
 
 RCT_EXPORT_METHOD(bind:(nonnull NSNumber*)cId
                   port:(int)port
@@ -70,11 +73,14 @@ RCT_EXPORT_METHOD(bind:(nonnull NSNumber*)cId
     callback(@[[NSNull null], [client address]]);
 }
 
+
+
 RCT_EXPORT_METHOD(send:(nonnull NSNumber*)cId
                   string:(NSString*)base64String
                   port:(int)port
                   address:(NSString*)address
-                  callback:(RCTResponseSenderBlock)callback) {
+                  callback:(RCTResponseSenderBlock)callback)
+{
     UdpSocketClient* client = [self findClient:cId callback:callback];
     if (!client) return;
 
@@ -84,14 +90,20 @@ RCT_EXPORT_METHOD(send:(nonnull NSNumber*)cId
     [client send:data remotePort:port remoteAddress:address callback:callback];
 }
 
+
+
 RCT_EXPORT_METHOD(close:(nonnull NSNumber*)cId
-                  callback:(RCTResponseSenderBlock)callback) {
+                  callback:(RCTResponseSenderBlock)callback)
+{
     [self closeClient:cId callback:callback];
 }
 
+
+
 RCT_EXPORT_METHOD(setBroadcast:(nonnull NSNumber*)cId
                   flag:(BOOL)flag
-                  callback:(RCTResponseSenderBlock)callback) {
+                  callback:(RCTResponseSenderBlock)callback)
+{
     UdpSocketClient* client = [self findClient:cId callback:callback];
     if (!client) return;
 
@@ -105,8 +117,11 @@ RCT_EXPORT_METHOD(setBroadcast:(nonnull NSNumber*)cId
     callback(@[[NSNull null]]);
 }
 
+
+
 RCT_EXPORT_METHOD(addMembership:(nonnull NSNumber*)cId
-                  multicastAddress:(NSString *)address) {
+                  multicastAddress:(NSString *)address)
+{
      UdpSocketClient *client = _clients[cId];
     
     if (!client) return;
@@ -115,8 +130,11 @@ RCT_EXPORT_METHOD(addMembership:(nonnull NSNumber*)cId
     [client joinMulticastGroup:address error:&error];
 }
 
+
+
 RCT_EXPORT_METHOD(dropMembership:(nonnull NSNumber*)cId
-                  multicastAddress:(NSString *)address) {
+                  multicastAddress:(NSString *)address)
+{
     UdpSocketClient *client = _clients[cId];
     
     if (!client) return;
@@ -124,6 +142,8 @@ RCT_EXPORT_METHOD(dropMembership:(nonnull NSNumber*)cId
     NSError *error = nil;
     [client leaveMulticastGroup:address error:&error];
 }
+
+
 
 - (void) onData:(UdpSocketClient*) client data:(NSData *)data host:(NSString *)host port:(uint16_t)port
 {
@@ -137,6 +157,8 @@ RCT_EXPORT_METHOD(dropMembership:(nonnull NSNumber*)cId
                                                            }
      ];
 }
+
+
 
 -(UdpSocketClient*)findClient:(nonnull NSNumber*)cId callback:(RCTResponseSenderBlock)callback
 {
@@ -155,6 +177,8 @@ RCT_EXPORT_METHOD(dropMembership:(nonnull NSNumber*)cId
     return client;
 }
 
+
+
 -(void) closeClient:(nonnull NSNumber*)cId
            callback:(RCTResponseSenderBlock)callback
 {
@@ -167,5 +191,15 @@ RCT_EXPORT_METHOD(dropMembership:(nonnull NSNumber*)cId
 
     if (callback) callback(@[]);
 }
+
+
+@synthesize description;
+
+
+@synthesize hash;
+
+
+@synthesize superclass;
+
 
 @end

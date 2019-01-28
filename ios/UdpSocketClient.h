@@ -1,13 +1,9 @@
-//
-//  RCTUDPClient.h
-//  react-native-udp
-//
-//  Created by Mark Vayngrib on 5/9/15.
-//  Copyright (c) 2015 Tradle, Inc. All rights reserved.
-//
 
 #import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
+
+#import "RNUdpSocketEventEmitter.h"
+
 
 extern NSString *const RCTUDPErrorDomain;
 
@@ -27,11 +23,13 @@ typedef enum RCTUDPError RCTUDPError;
 
 @class UdpSocketClient;
 
+
 @protocol SocketClientDelegate <NSObject>
 
 - (void)onData:(UdpSocketClient*) client data:(NSData *)data host:(NSString*) host port:(uint16_t) port;
 
 @end
+
 
 @interface UdpSocketClient : NSObject
 
@@ -39,6 +37,9 @@ typedef enum RCTUDPError RCTUDPError;
 @property (nonatomic, retain) NSString* host;
 @property (nonatomic) u_int16_t port;
 @property (nonatomic, weak) id<SocketClientDelegate> clientDelegate;
+@property (nonatomic, retain) RNUdpSocketEventEmitter* emitter;
+
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Class Methods
