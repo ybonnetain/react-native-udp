@@ -7,7 +7,7 @@
 @interface RNUdpSocketEventEmitter: RCTEventEmitter <RCTBridgeModule>
 
 
--(void)emit:(NSDictionary *)base64String
+-(void)emit:(NSDictionary *)objMessage
        host:(NSString *)host
        port:(NSNumber *)port;
 

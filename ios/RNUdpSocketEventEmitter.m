@@ -52,13 +52,13 @@ RCT_EXPORT_MODULE(RNUdpSocketEventEmitter);
 
 
 
-- (void)emit:(NSDictionary *)base64String
+- (void)emit:(NSDictionary *)objMessage
         host:(NSString *)host
         port:(NSNumber *)port
 {
     if (listenerAttached) {
         [self sendEventWithName:kOnUdpData body:@{
-              @"data": base64String,
+              @"data": objMessage,
               @"address": host,
               @"port": port
         }];
