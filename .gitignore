@@ -24,12 +24,6 @@ project.xcworkspace
 # Xcode, Gradle
 build/
 
-# Android
-.idea
-.gradle
-local.properties
-*.iml
-
 # Node
 node_modules
 *.log
